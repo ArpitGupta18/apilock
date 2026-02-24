@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
+import { sendRequest } from "../requestEngine.js";
 
 const testCommand = new Command("test");
 
@@ -9,12 +10,17 @@ testCommand
 	.option("--method <string>", "HTTP method", "GET")
 	.option("--concurrency <number>", "Number of concurrent workers", "1")
 	.option("--requests <number>", "Total number of requests", "1")
-	.action((options) => {
+	.action(async (options) => {
 		console.log(chalk.blue("\nAPI Lock - Test Configuration\n"));
-		console.log("URL:", options.url);
-		console.log("Method:", options.method);
-		console.log("Concurrency:", options.concurrency);
-		console.log("Total Requests:", options.requests);
+
+		const result = await sendRequest({
+			url: options.url,
+			method: options.method,
+		});
+
+		console.log("Status:", result.status);
+		console.log("Latency:", result.latency.toFixed(2), "ms");
+		console.log("Success:", result.success);
 		console.log();
 	});
 
