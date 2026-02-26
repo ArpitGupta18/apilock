@@ -15,10 +15,11 @@ testCommand
 	.option("--requests <number>", "Total number of requests", "1")
 	.option("--body <path>", "Path to JSON body file")
 	.option("--header <value...>", "Custom headers (key:value format)")
+	.option("--retries <number>", "Retry attempts for failed requests", "0")
 	.action(async (options) => {
 		const totalRequests = Number(options.requests);
 		const concurrency = Number(options.concurrency);
-
+		const retries = Number(options.retries);
 		let headers = {};
 
 		if (options.header) {
@@ -50,6 +51,7 @@ testCommand
 					method: options.method,
 					headers,
 					body,
+					retries,
 				}),
 		});
 
