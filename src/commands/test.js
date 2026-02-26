@@ -2,7 +2,8 @@ import { Command } from "commander";
 import { sendRequest } from "../core/requestEngine.js";
 import { runWorkerPool } from "../core/workerPool.js";
 import { calculateMetrics } from "../core/metrics.js";
-import { formatReport } from "../core/formatReport.js";
+import { formatReport } from "../utils/formatReport.js";
+import fs from "fs";
 
 const testCommand = new Command("test");
 
@@ -12,17 +13,44 @@ testCommand
 	.option("--method <string>", "HTTP method", "GET")
 	.option("--concurrency <number>", "Number of concurrent workers", "1")
 	.option("--requests <number>", "Total number of requests", "1")
+	.option("--body <path>", "Path to JSON body file")
+	.option("--header <value...>", "Custom headers (key:value format)")
 	.action(async (options) => {
 		const totalRequests = Number(options.requests);
 		const concurrency = Number(options.concurrency);
 
+		let headers = {};
+
+		if (options.header) {
+			options.header.forEach((h) => {
+				const [key, ...rest] = h.split(":");
+				headers[key.trim()] = rest.join().trim();
+			});
+		}
+
+		let body = null;
+
+		if (options.body) {
+			try {
+				const fileContent = fs.readFileSync(options.body, "utf-8");
+				body = JSON.parse(fileContent);
+			} catch (error) {
+				console.error("Invalid JSON body file.");
+				process.exit(1);
+			}
+		}
 		const testStart = performance.now();
 
 		const results = await runWorkerPool({
 			totalRequests,
 			concurrency,
 			requestFn: () =>
-				sendRequest({ url: options.url, method: options.method }),
+				sendRequest({
+					url: options.url,
+					method: options.method,
+					headers,
+					body,
+				}),
 		});
 
 		const testEnd = performance.now();

@@ -1,6 +1,11 @@
 import chalk from "chalk";
 
 export function formatReport({ totalRequests, concurrency, metrics }) {
+	const statusLines = Object.entries(metrics.statusBreakdown)
+		.map(([code, count]) => {
+			return `${chalk.blue(`  ${code}:`)} ${count}`;
+		})
+		.join("\n");
 	return `
     
 ${chalk.blue("API LOCK REPORT")}
@@ -15,5 +20,8 @@ Max Latency: ${metrics.maxLatency.toFixed(2)} ms
 Avg Latency: ${metrics.avgLatency.toFixed(2)} ms
 Throughput: ${metrics.throughput.toFixed(2)} req/sec
 --------------------------------
+
+Status Breakdown
+${statusLines}
 `;
 }
