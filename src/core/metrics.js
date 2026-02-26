@@ -17,6 +17,12 @@ export function calculateMetrics(results, totalRequests, totalDurationSeconds) {
 
 	const throughput = totalRequests / totalDurationSeconds;
 
+	const statusBreakdown = {};
+
+	results.forEach((r) => {
+		statusBreakdown[r.status] = (statusBreakdown[r.status] || 0) + 1;
+	});
+
 	return {
 		successCount,
 		clientErrors,
@@ -25,5 +31,6 @@ export function calculateMetrics(results, totalRequests, totalDurationSeconds) {
 		minLatency,
 		maxLatency,
 		throughput,
+		statusBreakdown,
 	};
 }

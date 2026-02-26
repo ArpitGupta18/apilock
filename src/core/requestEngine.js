@@ -1,12 +1,14 @@
 import axios from "axios";
 
-export async function sendRequest({ url, method }) {
+export async function sendRequest({ url, method, headers = {}, body = null }) {
 	const start = performance.now();
 
 	try {
 		const response = await axios({
 			url,
 			method,
+			headers,
+			data: body,
 			validateStatus: () => true,
 		});
 
