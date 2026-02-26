@@ -1,0 +1,29 @@
+export function calculateMetrics(results, totalRequests, totalDurationSeconds) {
+	const successCount = results.filter((r) => r.success).length;
+
+	const clientErrors = results.filter(
+		(r) => r.status >= 400 && r.status < 500,
+	).length;
+
+	const serverErrors = results.filter((r) => r.status >= 500).length;
+
+	const latencies = results.map((r) => r.latency);
+
+	const avgLatency =
+		latencies.reduce((sum, val) => sum + val, 0) / results.length;
+
+	const minLatency = Math.min(...latencies);
+	const maxLatency = Math.max(...latencies);
+
+	const throughput = totalRequests / totalDurationSeconds;
+
+	return {
+		successCount,
+		clientErrors,
+		serverErrors,
+		avgLatency,
+		minLatency,
+		maxLatency,
+		throughput,
+	};
+}
