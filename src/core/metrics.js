@@ -23,6 +23,16 @@ export function calculateMetrics(results, totalRequests, totalDurationSeconds) {
 		statusBreakdown[r.status] = (statusBreakdown[r.status] || 0) + 1;
 	});
 
+	const totalAttempts = results.reduce(
+		(sum, r) => sum + (r.attempts || 1),
+		0,
+	);
+
+	const retriedRequests = results.filter(
+		(r) => r.attempts && r.attempts > 1,
+	).length;
+
+	const avgAttempts = totalAttempts / results.length;
 	return {
 		successCount,
 		clientErrors,
@@ -32,5 +42,8 @@ export function calculateMetrics(results, totalRequests, totalDurationSeconds) {
 		maxLatency,
 		throughput,
 		statusBreakdown,
+		totalAttempts,
+		retriedRequests,
+		avgAttempts,
 	};
 }

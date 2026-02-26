@@ -19,6 +19,9 @@ Min Latency: ${metrics.minLatency.toFixed(2)} ms
 Max Latency: ${metrics.maxLatency.toFixed(2)} ms
 Avg Latency: ${metrics.avgLatency.toFixed(2)} ms
 Throughput: ${metrics.throughput.toFixed(2)} req/sec
+Total Attempts: ${metrics.totalAttempts}
+Avg Attempts per Request: ${metrics.avgAttempts.toFixed(2)}
+Requests Retried: ${metrics.retriedRequests}
 --------------------------------
 
 Status Breakdown
